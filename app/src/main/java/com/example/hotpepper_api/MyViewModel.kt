@@ -1,25 +1,24 @@
 package com.example.hotpepper_api
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
-import com.example.hotpepper_api.model.ResultResponse
+import com.example.hotpepper_api.model.Response
 import kotlinx.coroutines.launch
 
-class MyViewModel (application: Application) : AndroidViewModel(application) {
 
-    private val api = ResultRepository(application.applicationContext.getString(R.string.BASE_URL))
+class MyViewModel() : ViewModel() {
+
+    private val repository = ResultRepository("http://webservice.recruit.co.jp/hotpepper/")
 
     //private var _shopList = MutableLiveData<List<ResultResponse.Result.Shop>>()
-    val shopList = MutableLiveData<List<ResultResponse.Result.Shop>>()
+    val shopList = MutableLiveData<List<Response.Result.Shop>>()
 
-    private fun fetchShopList(key: String, small_area: String, format: String) {
+    fun getShopList(key: String, small_area: String, special_category: String, type: String, format: String) {
         viewModelScope.launch {
-            try {
-                shopList.value = api.getShopsList(key, small_area, format)
-            } catch (e: Exception) {
-                e.stackTrace
-            }
-
+            val response = repository.getResponse(key, small_area, special_category, type, format)
+            Log.d("tag", response.toString())
+            //shopList.value = response.result.shop
         }
     }
 }
